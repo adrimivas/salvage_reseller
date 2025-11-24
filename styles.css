@@ -1,0 +1,189 @@
+/*color pallate or JUNKIES WEBSITE*/
+*,
+*::before,
+*::after { box-sizing: border-box; }
+:root {
+  --background-color: #fffcdd;
+  --Sunflower-gold: #F3B61F;
+  --old-gold-green: #a29f15;
+  --black-cherry: #510D0A;
+  --pitch-brown: #191102;
+}
+
+html,body{
+  font-size: 16px;
+  margin: 0;
+  
+}
+
+/* Basic page styling */
+body {
+  font-size: 1.2rem;
+  font-family: system-ui, sans-serif;
+  background-color: var(--background-color);
+  color: var(--old-gold-green);
+}
+
+
+/* Nav bar */
+.nav-bar {
+  position: sticky;   /* or use fixed; see below */
+  top: 0;
+  left: 0;            /* not strictly needed with width:100% */
+  right: 0;
+  background-color: #A39800;
+  z-index: 1000;      /* keeps it above content */
+  width: 100%;     
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.2rem 3rem ;    /* your inner spacing */
+  border-radius: 1rem;
+  border-bottom: 2px solid var(--black-cherry);
+}
+
+
+.nav-bar-link {
+  font-size: 1.2rem;
+  color: var(--black-cherry);
+  border-radius: 0.5rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  text-decoration: none;
+  transition: transform 0.2s ease-in-out;
+}
+.nav-bar-link {
+  background:
+    linear-gradient(#E1C614, #E1C614) 0 0 / 0% 100% no-repeat;
+  transition:
+    background-size 0.2s ease-out,
+    transform 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+}
+.nav-bar-link:hover {
+  background-size: 100% 100%;
+  color: var(--pitch-brown);
+  border-color: transparent;
+  transform: scale(1.05);
+}
+
+
+
+.nav-icon{
+  display: inline-flex;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.icon-lottie{
+  margin:0.5rem 0.4rem 0 0.4rem;
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Home Page Styles */
+.homepage-welcome-message {
+  text-align: center;
+  margin-top: 2rem;
+  display: flex;
+  
+  justify-content: space-around;
+}
+.home-page-img div{
+  flex: 1;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.home-page-img {
+  margin-top: 1.5rem;
+  width: 80%;
+  max-width: 600px;
+  
+}
+
+/*Search Bars*/
+.search-bars-container{
+  display: flex;
+  justify-content: space-around;
+}
+
+/* Form layout */
+
+.form-heading{
+  text-align: center;
+  color: var(--csub-blue);
+  margin-bottom: 1rem;
+}
+
+form {
+  width: 100%;
+  max-width: 500px;
+  margin: 1rem auto;
+}
+
+form label {
+  font-weight: 600;
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+form input[type="text"],
+form input[type="date"],
+form input[type="submit"] {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  box-shadow: 0 2px 6px #0001;
+  margin-bottom: 1rem;
+  max-width: 500px;
+}
+
+.item-img {
+  width: 100px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.item-info { flex: 1; }
+
+.item-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.item-details {
+  margin: 0.25rem 0 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.add-to-cart-btn {
+  background: #f3b61f;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  color: #191102;
+  font-weight: bold;
+  transition: transform 0.15s ease;
+}
+.add-to-cart-btn:hover {
+  transform: scale(1.05);
+}
