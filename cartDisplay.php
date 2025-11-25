@@ -8,6 +8,7 @@ require_once __DIR__ . '/main.php';
 <main class="container">
   <h1>Your Cart</h1>
   <div id="cart-results"></div>
+  <button onClick="checkOutItems()" class="check-out">CheckOut</button>
 </main>
 
 <script>
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       box.innerHTML = '';
       data.forEach(item => {
-        if (item.product_type==='1'){
+        if (item.product_type==='1' && item.quantity>0){
           const card = document.createElement('div');
           card.className = 'item-card';
           card.innerHTML = `
@@ -31,12 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="item-details">
                 <span class="item-price">$${item.price}</span>
               </p>
+              <p class="item-details" >
+                <span class="item-price">Qauntity: ${item.quantity}</span>
+              </p>
               <button type="button" id ="${item.item_id}" class="add-to-cart-btn">Remove</button>
             </div>
           `;
           box.appendChild(card);;
         }
-        else{
+        else if (item.quantity>0){
           const card = document.createElement('div');
           card.className = 'item-card';
           card.innerHTML = `
@@ -45,14 +49,50 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="item-details">
                 <span class="item-price">$${item.price}</span>
               </p>
+              <p class="item-details">
+                <span class="item-price">Quantity: ${item.quantity}</span>
+              </p>
               <button type="button" id ="${item.item_id}" class="add-to-cart-btn">Remove</button>
             </div>
           `;
           box.appendChild(card);;
         }});
+        const add_to_cart_btns = document.getElementsByClassName('add-to-cart-btn');
+        for (let btn of add_to_cart_btns){
+        btn.addEventListener("click", handleButtonClick);
+        }
+
+
 })
     .catch(err => { box.textContent = 'Error loading cart.'; console.error(err); });
 });
+
+
+  function handleButtonClick(e){
+    window.location.reload();
+    const btn = e.currentTarget;           // the clicked button
+    const id  = btn.id;                    // should be a number/string
+    const fd  = new FormData();
+    fd.append('item_id', id);
+    fetch('removeFromCart.php', {
+        method: 'POST',
+        body: fd,
+      })
+    }
+
+  function checkOutItems(){
+    const userId = localStorage.getItem('user_id'); // or however you store it
+    fetch('checkOut.php', {
+      method: 'POST',
+    }).then(res => res.json())
+  .then(data => {
+    console.log(data);
+    alert(data.message);
+  })
+  .catch(err => console.error(err));
+    
+  }
+  
 </script>
 
 

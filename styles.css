@@ -173,8 +173,7 @@ form input[type="submit"] {
   color: #666;
   font-size: 0.9rem;
 }
-
-.add-to-cart-btn {
+button {
   background: #f3b61f;
   border: none;
   border-radius: 20px;

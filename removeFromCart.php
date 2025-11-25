@@ -4,18 +4,17 @@
     session_start();
     $user_id = $_SESSION['user']['id'] ?? null;
     if (!$user_id) { http_response_code(401); echo json_encode(['ok'=>false,'error'=>'Not logged in']); exit; }
-
+    $pdo = get_pdo();
+    $item_id   = trim($_POST['item_id'] ?? '');
+    $errors =[];
     try {
-        $pdo = get_pdo();
 
         // Replace "YourTable" and "your_column" with appropriate values
 
-        $stmt = $pdo->prepare("SELECT Inventory.item_id, Inventory.product_type,Inventory.item_name, Inventory.model,Inventory.price,Inventory.quantity  FROM cart NATURAL JOIN   Inventory WHERE cart.customerId =?");
-        $stmt->execute([$user_id]);
+        $stmt = $pdo->prepare("DELETE  FROM cart WHERE customerID=? and item_id = ?");
+        $stmt->execute([$user_id,$item_id]);
 
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        echo json_encode(['ok'=>true,'data'=>$rows], JSON_PRETTY_PRINT);
+        echo json_encode(['ok'=>true], JSON_PRETTY_PRINT);
     } catch (PDOException $e) {
         echo "<p><strong>Error:</strong> " . $e->getMessage() . "</p>";
     }

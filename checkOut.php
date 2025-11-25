@@ -10,12 +10,13 @@
 
         // Replace "YourTable" and "your_column" with appropriate values
 
-        $stmt = $pdo->prepare("SELECT Inventory.item_id, Inventory.product_type,Inventory.item_name, Inventory.model,Inventory.price,Inventory.quantity  FROM cart NATURAL JOIN   Inventory WHERE cart.customerId =?");
+        $stmt = $pdo->prepare("UPDATE Inventory JOIN cart on cart.item_id=Inventory.item_id SET Inventory.quantity=Inventory.quantity -1 WHERE cart.customerId= ?");
         $stmt->execute([$user_id]);
+        $sql2 = $pdo->prepare("DELETE FROM cart WHERE customerId = ?");
+        $sql2->execute([$user_id]);
 
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        echo json_encode(['ok'=>true,'data'=>$rows], JSON_PRETTY_PRINT);
+        echo json_encode(["message" => "Purchase completed and inventory updated"]);
     } catch (PDOException $e) {
         echo "<p><strong>Error:</strong> " . $e->getMessage() . "</p>";
     }

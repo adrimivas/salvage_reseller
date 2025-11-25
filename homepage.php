@@ -9,11 +9,11 @@
 <div class="search-bars-container">
   <form id='make-search' method="POST">
     <!-- Replace these fields with ones that match your chosen table -->
-    <label for="Make">Make:</label>
+    <label >Make:</label>
     <input type="make" name="make" id="make" ><br>
     
 
-    <label for="product-type">Car Or Part:</label>
+    <label>Car Or Part:</label>
     <select name="product_type" id='item_search' method ="POST">
       <option value="0">Car</option>
       <option value="1">Parts</option>
@@ -82,9 +82,11 @@
               <h3 class="item-title">${car.model} — ${car.item_name}</h3>
               <p class="item-details">
                 <span class="item-condition">Condition: ${car.item_condition}</span> ·
-                <span class="item-price">$${car.Price}</span>
+                <span class="item-price"> Price : $${car.Price}</span>
+                
+
               </p>
-              <button type="button" id ="${car.item_id}" class="add-to-cart-btn">Add to Cart</button>
+             ${car.quantity > 0 ? `<button type="button" id="${car.item_id}" class="add-to-cart-btn">Add to Cart</button>` : 'Out Of Stock'}
             </div>
           `;
           document.getElementById('results').appendChild(card);
@@ -97,9 +99,9 @@
               <h3 class="item-title">${car.model}</h3>
               <p class="item-details">
                 <span class="item-condition">Condition: ${car.item_condition}</span> ·
-                <span class="item-price">$${car.Price}</span>
+                <span class="item-price"> Price: $${car.Price}</span>
               </p>
-              <button type="button" id ="${car.item_id}" class="add-to-cart-btn">Add to Cart</button>
+              ${car.quantity > 0 ? `<button type="button" id="${car.item_id}" class="add-to-cart-btn">Add to Cart</button>` : 'Out Of Stock'}
             </div>
           `;
           document.getElementById('results').appendChild(card);
