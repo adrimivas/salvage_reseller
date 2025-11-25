@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
   function checkOutItems(){
+    window.location.reload();
     const userId = localStorage.getItem('user_id'); // or however you store it
     fetch('checkOut.php', {
       method: 'POST',
