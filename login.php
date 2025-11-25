@@ -38,7 +38,8 @@ $page_title = 'Login • JUNKIES';
       </label>
 
       <button class="submit-button" type="submit">Sign in</button>
-      <button class="submit-button" type="submit">Employee? Click Here</button>
+      <a href="employeeLogin.php" class="submit-button">Employee? Click Here</a>
+
     </form>
   </div>
         </main>
