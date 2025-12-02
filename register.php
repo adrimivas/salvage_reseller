@@ -22,7 +22,7 @@ $stmt-> execute([
 $_POST['Email'],  
 $_POST['PhoneNumber'], 
 $_POST['password_hash'], 
-$_POST['DefaultShip'],]); 
+$_POST['DefaultShip']]); 
 
 $success= "Account created successfully"; 
 } 
