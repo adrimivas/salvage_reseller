@@ -1,6 +1,10 @@
 <?php  
 require_once __DIR__ . '/config.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 $page_title = 'Register'; 
 $active = 'register'; 
@@ -22,7 +26,7 @@ $_POST['DefaultShip'],]);
 
 $success= "Account created successfully"; 
 } 
-catch(PDOException $e){ 
+catch(Throwable $e){ 
 $error = '<strong>Error:</strong> ' . $e->getMessage(); 
 } 
 } 
@@ -35,6 +39,10 @@ $content = function() use ($success, $error){
 <?php elseif($error): ?> 
 <p><?= $error ?></p> 
 <?php endif; ?> 
+<?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+  <pre><?php echo "DEBUG POST:\n"; var_dump($_POST); ?></pre>
+<?php endif; ?>
+
 <form method = "POST"> 
 
 <label for= "Email">Enter email: </label> 
