@@ -2,8 +2,8 @@
 require_once __DIR__ . '/config.php';
 
 
-$page_title = ‘Register’; 
-$active = ‘register’; 
+$page_title = 'Register'; 
+$active = 'register'; 
 
 $success = null; 
 $error = null; 
@@ -38,7 +38,7 @@ $content = function() use ($success, $error){
 <form method = "POST"> 
 
 <label for= "Email">Enter email: </label> 
-<input type = "String" name= "Email" id = "Email" required><br> 
+<input type = "email" name= "Email" id = "Email" required><br> 
 
 <label for= "PhoneNumber">Enter Phone number: </label> 
 <input type = "text" name= "PhoneNumber" id = "PhoneNumber" required><br> 
