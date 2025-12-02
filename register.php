@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+echo "checkpoint A<br>";   
 
 $page_title = 'Register'; 
 $active = 'register'; 
@@ -14,6 +15,8 @@ $error = null;
 
 if($_SERVER["REQUEST_METHOD"] === "POST"){ 
 try{ 
+        echo "checkpoint B (before DB)<br>";   
+
 $pdo = get_pdo(); 
 $stmt = $pdo->prepare("INSERT INTO CUSTOMER (Email, PhoneNumber, password_hash, DefaultShip) 
 VALUES (?, ?, ?, ?)"); 
