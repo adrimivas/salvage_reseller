@@ -1,7 +1,7 @@
 <?php
 $user = "kdubey"; // replace with your Artemis DB username
 $pass = "Sevh2ypol"; // replace with your Artemis DB password
-$db   = "salvage_reseller"; // replace with your database name
+$db   = "kdubey"; // replace with your database name
 
 // Establish a PDO connection
 function get_pdo() {
