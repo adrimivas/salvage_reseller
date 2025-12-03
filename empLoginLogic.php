@@ -15,8 +15,8 @@ $pdo = get_pdo();
 
 // --- 1) state for rendering ---
 $errors = [];
-$email  = trim($_POST['email'] ?? '');
-$pass   = $_POST['password'] ?? '';
+$email  = trim($_POST['Email'] ?? '');
+$pass   = $_POST['password_hash'] ?? '';
 $login_success = false;
 // --- 2) known credentials (in real life, fetch from DB) ---
 $typed_id = '';     // remember what user typed so we can re-fill the form
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       'id'    => (int)$user['Admin_ID'], // adapt to your PK column
       ];
       session_regenerate_id(true);
-      header('Location: index.php'); // change to your destination
+      header('Location: employees.php'); // change to your destination
       exit;
     } else {
       $errors[] = 'Email or password is incorrect.';
