@@ -3,8 +3,13 @@
 
 <form method="POST"> 
 <!-- Replace these fields with ones that match your chosen table --> 
+
+<label for="Name">Enter Full Name:</label> 
+<input type="text" name="Name" id="Name" required><br> 
+
 <label for="Email">Enter email:</label> 
 <input type="string" name="Email" id="Email" required><br> 
+
 <label for="PhoneNumber">Enter phone number:</label> 
 <input type="text" name="PhoneNumber" id=" PhoneNumber" required><br> 
 
@@ -21,8 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 try { 
 $pdo = get_pdo(); 
 // Replace "Rider" and columns with your own 
-$stmt = $pdo->prepare("INSERT INTO Customers (Email, PhoneNumber, password_hash, DefaultShip) VALUES (?, ?, ?, ?)"); 
+$stmt = $pdo->prepare("INSERT INTO Customers (Name, Email, PhoneNumber, password_hash, DefaultShip) VALUES (?, ?, ?, ?, ?)"); 
 $stmt->execute([ 
+$_POST['Name'], 
 $_POST['Email'], 
 $_POST['PhoneNumber'], 
 $_POST['password_hash'], 
