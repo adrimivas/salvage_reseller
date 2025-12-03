@@ -11,7 +11,7 @@ function navClass(string $key, ?string $active): string {
 <nav class="nav-bar">
   <div class="nav-bar-links-container">
     <a class="<?= navClass('login', $active ?? null) ?>"    href="login.php">Login</a>
-    <a class="<?= navClass('register', $active ?? null) ?>" href="/register.php">Register</a>
+    <a class="<?= navClass('register', $active ?? null) ?>" href="register.php">Register</a>
     <a class="<?= navClass('profile', $active ?? null) ?>"  href="profile.php">Profile</a>
     <a class="<?= navClass('Home', $active ?? null) ?>"   href="index.php">Home</a>
   </div>
