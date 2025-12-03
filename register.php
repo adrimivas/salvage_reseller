@@ -18,7 +18,7 @@ try{
         echo "checkpoint B (before DB)<br>";   
 
 $pdo = get_pdo(); 
-$stmt = $pdo->prepare("INSERT INTO CUSTOMER (Email, PhoneNumber, password_hash, DefaultShip) 
+$stmt = $pdo->prepare("INSERT INTO Customers (Email, PhoneNumber, password_hash, DefaultShip) 
 VALUES (?, ?, ?, ?)"); 
 
 $stmt-> execute([ 
