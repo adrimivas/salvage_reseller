@@ -10,7 +10,7 @@ $error = null;
 if($_SERVER["REQUEST_METHOD"] === "POST"){  
 try{  
 $pdo = get_pdo();  
-$stmt = $pdo->prepare("INSERT INTO CUSTOMER (Email, PhoneNumber, password_hash, DefaultShip)  
+$stmt = $pdo->prepare("INSERT INTO Customers (Email, PhoneNumber, password_hash, DefaultShip)  
 VALUES (?, ?, ?, ?)");  
 
 $stmt-> execute([  
@@ -36,12 +36,12 @@ $content = function() use ($success, $error){
 <?php endif; ?>  
 <form method = "POST">  
 <label for= "Email">Enter email: </label>  
-<input type = "String" name= "Email" id = "Email" required><br>   
+<input type="email" name="Email" id="Email" required>
 <label for= "PhoneNumber">Enter Phone number: </label>  
 <input type = "text" name= "PhoneNumber" id = "PhoneNumber" required><br>  
 
 <label for= "password_hash">Enter password: </label>  
-<input type = "text" name= "password_hash" id = "password_hash" required><br>  
+<input type="password" name="password" id="password" required>
  
 <label for= "DefaultShip">Enter shipping address: </label>  
 <input type = "text" name= "DefaultShip" id = "DefaultShip" required><br>  
