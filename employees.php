@@ -14,7 +14,7 @@ if (!isset($_SESSION['email'])) {
     <title>Employee Dashboard</title>
 
     <!-- Employee styling -->
-    <link rel="stylesheet" href="employee.css">
+    <link rel="stylesheet" href="employees.css">
 </head>
 <body>
 
@@ -45,7 +45,7 @@ if (!isset($_SESSION['email'])) {
         <!-- 7. ANALYTICS -->
         <a href="analytics.php" class="Submit-button">Analytics</a>
 
-        <!-- Logout -->
+        <!-- LOGOUT -->
         <a href="logout.php" class="Submit-button">Logout</a>
 
     </nav>
