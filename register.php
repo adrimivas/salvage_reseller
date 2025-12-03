@@ -1,4 +1,4 @@
-<?php include("main.php"); ?> 
+require __DIR__ . '/main.php';
 
 <h2>Register</h2> 
 
