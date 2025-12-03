@@ -41,7 +41,7 @@ else {
         exit;
     }
     else{
-        $stmt = $pdo->prepare('SELECT  Price,item_condition, item_name, model, product_type,item_id,quantiy FROM Inventory WHERE make LIKE ?  AND product_type = ? LIMIT 10');
+        $stmt = $pdo->prepare('SELECT  Price,item_condition, item_name, model, product_type,item_id,quantity FROM Inventory WHERE make LIKE ?  AND product_type = ? LIMIT 10');
         $pattern = "%{$make}%";
         $stmt->execute([$pattern, $product_type ]);
         
