@@ -1,5 +1,5 @@
 <?php  
-require_once __DIR__ . '/config.php'; 
+require_once __DIR__ . 'config.php'; 
 
 $page_title = 'Register';  
 $active = 'register';  
@@ -49,4 +49,4 @@ $content = function() use ($success, $error){
 </form>  
 <?php  
 };  
-require_once __DIR__ . '/main.php';  
+require_once __DIR__ . 'main.php';  
