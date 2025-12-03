@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 try { 
 $pdo = get_pdo(); 
 // Replace "Rider" and columns with your own 
-$stmt = $pdo->prepare("INSERT INTO Customer (Email, PhoneNumber, password_hash, DefaultShip) VALUES (?, ?, ?, ?)"); 
+$stmt = $pdo->prepare("INSERT INTO Customers (Email, PhoneNumber, password_hash, DefaultShip) VALUES (?, ?, ?, ?)"); 
 $stmt->execute([ 
 $_POST['Email'], 
 $_POST['PhoneNumber'], 
