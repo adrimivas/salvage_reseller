@@ -1,5 +1,5 @@
 <?php 
-require_once __DIR__ . '/loginLogic.php';
+require_once __DIR__ . '/empLoginLogic.php';
 require_once __DIR__ . '/head.php'; // opens <html><head> etc.
 
 

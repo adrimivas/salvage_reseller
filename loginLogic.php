@@ -16,7 +16,7 @@ $pdo = get_pdo();
 // --- 1) state for rendering ---
 $errors = [];
 $email  = trim($_POST['email'] ?? '');
-$pass   = $_POST['password_hash'] ?? '';
+$pass   = $_POST['password'] ?? '';
 $login_success = false;
 // --- 2) known credentials (in real life, fetch from DB) ---
 $typed_id = '';     // remember what user typed so we can re-fill the form
