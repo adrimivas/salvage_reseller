@@ -12,7 +12,7 @@ $pdo = get_pdo();
 
 
 // your PHP login logic here
-
+session_start();
 // --- 1) state for rendering ---
 $errors = [];
 $email  = trim($_POST['email'] ?? '');
@@ -34,14 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!$errors) {
     $stmt = $pdo->prepare('SELECT Admin_ID, Email, password_hash FROM Employees WHERE Email = ? LIMIT 1');
     $stmt->execute([$email]);
-    $user = $stmt->fetch(); // row or false
+    $user = $stmt->fetch(PDO::FETCH_ASSOC); // row or false
 
     if ($user && password_verify($pass, $user['password_hash'])) {
       $login_success = true;
-     session_start();
-      $_SESSION['user'] = [
-      'id'    => (int)$user['Admin_ID'], // adapt to your PK column
-      ];
+     
+      $_SESSION['email'] = $user['Email'];
+      $_SESSION['admin_id'] = (int)$user['Admin_ID'];
+      // prevent session fixation
       session_regenerate_id(true);
       header('Location: employees.php'); // change to your destination
       exit;
