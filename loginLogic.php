@@ -14,7 +14,7 @@ $pdo = get_pdo();
 // --- 1) state for rendering --- 
 $errors = []; 
 $email = trim($_POST['email'] ?? ''); 
-$pass = $_POST['password'] ?? ''; 
+$pass = $_POST['Password'] ?? ''; 
 $login_success = false; 
 // --- 2) known credentials (in real life, fetch from DB) --- 
 $typed_id = ''; // remember what user typed so we can re-fill the form 
@@ -25,15 +25,15 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 $errors[] = 'Please enter a valid email address.'; 
 } 
 if ($pass === '') { 
-$errors[] = 'Please enter your password.'; 
+$errors[] = 'Please enter your Password.'; 
 } 
 // (b) query DB only if inputs look sane 
 if (!$errors) { 
-$stmt = $pdo->prepare('SELECT User_ID, Email, password, Name, PhoneNumber, DefaultShip FROM Customers WHERE Email = ? LIMIT 1'); 
+$stmt = $pdo->prepare('SELECT User_ID, Email, Password, Name, PhoneNumber, DefaultShip FROM Customers WHERE Email = ? LIMIT 1'); 
 $stmt->execute([$email]); 
 $user = $stmt->fetch(); // row or false 
 
-if ($user && password_verify($pass, $user['password'])) { 
+if ($user && password_verify($pass, $user['Password'])) { 
 $login_success = true; 
 session_regenerate_id(true); 
 $_SESSION['user'] = [ 'id' => (int)$user['User_ID'], 'email' => $user['Email'], 
