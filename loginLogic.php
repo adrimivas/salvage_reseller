@@ -1,4 +1,5 @@
 <?php 
+
 session_start(); 
 error_reporting(E_ALL); 
 ini_set('display_errors', '1'); 
@@ -35,8 +36,8 @@ $user = $stmt->fetch(); // row or false
 if ($user && password_verify($pass, $user['Password'])) { 
 $login_success = true; 
 session_regenerate_id(true); 
-$_SESSION[‘user’] = [ ‘id’ => (int)$user[‘User_ID’], ‘email’ => $user[‘Email’], 
-‘name’ => $user[‘Name’], 'phone'=> $user[‘PhoneNumber’], ‘address’ => $user[‘DefaultShip],]; 
+$_SESSION['user'] = [ 'id' => (int)$user['User_ID'], 'email' => $user['Email'], 
+'name' => $user['Name'], 'phone'=> $user['PhoneNumber'], 'address' => $user['DefaultShip'],]; 
 
 header('Location: index.php'); // change to your destination 
 exit; 
