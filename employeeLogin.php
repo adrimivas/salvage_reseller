@@ -1,10 +1,10 @@
 <?php 
 require_once __DIR__ . '/empLoginLogic.php';
+require_once __DIR__ . '/head.php'; // opens <html><head> etc.
+
 
 $include_auth_css = false; // tell head.php to add auth.css
 $page_title = 'Login • JUNKIES';
-
-require_once __DIR__ . '/head.php'; // opens <html><head> etc.
 ?>
 
 <main class="login-form">
