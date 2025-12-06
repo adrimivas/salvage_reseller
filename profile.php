@@ -1,41 +1,59 @@
-<?php
-$page_title = 'Profile • JUNKIES';
-$active     = 'profile';
-
-$content = function () {
-  ?>
-  <main class="page">
-    <h1>My Profile</h1>
-<form method="GET"> 
-<!-- Replace "name_column" with the name of a searchable column (customer name, product name) --> 
-<label for="Email">Email:</label> 
-<input type="text" name="Email" id="Email"> 
-<input type="submit" value="Search"> 
-</form> 
 <?php 
-if (isset($_GET['Email'])) { 
-$search = "%" . $_GET['Email'] . "%"; 
 
-try { 
+if (session_status() === PHP_SESSION_NONE){ 
+session_start(); 
+} 
+require_once __DIR__ . '/config.php'; 
+
+if (empty($_SESSION['user'])){ 
+header('Location: login.php'); 
+exit; 
+} 
+ 
+$page_title = 'Profile • JUNKIES'; 
+$active = 'profile'; 
+
+$content = function () { 
+$user = $_SESSION['user']; 
 $pdo = get_pdo(); 
-
-// Replace "YourTable" and "your_column" with appropriate values 
-$stmt = $pdo->prepare("SELECT Orders.ItemID, Orders.Quantity, Customers.Name, Customers.Email, Customers.PhoneNumber FROM Customers JOIN Orders WHERE Email LIKE ?"); 
-$stmt->execute([$search]); 
-
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC); 
-
-echo "<p>Query executed successfully. " . count($rows) . " result(s) found.</p>"; 
-echo makeTable($rows); 
-} catch (PDOException $e) { 
-echo "<p><strong>Error:</strong> " . $e->getMessage() . "</p>"; 
-} 
-} 
 ?> 
+<main class="page"> 
+<h1>My Profile</h1> 
 
-<?php echo "</main></div></body></html>"; ?> 
-  </main>
-  <?php
-};
+<section> 
+<h2>My Account Details</h2> 
+<p><strong>Name:</strong> <?= htmlspecialchars($user['name']) ?></p> 
+<p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p> 
+<p><strong>Phone:</strong> <?= htmlspecialchars($user['phone']) ?></p> 
+<p><strong>Address:</strong> <?= htmlspecialchars($user['address']) ?></p> 
+</section> 
 
-require __DIR__ . '/main.php';
+<hr> 
+ 
+<section> 
+<h2> Past Orders: </h2> 
+<?php 
+try{ 
+$stmt = $pdo->prepare("SELECT OrderID, Purchase_Date, ItemID, product_type FROM Orders WHERE User_ID = ? ORDER BY Purchase_Date DESC");  
+$stmt->execute([$user['id']]);  
+
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);  
+ 
+if ($orders){ 
+echo "<p>Query executed successfully. " . count($orders) . " result(s) found.</p>";  
+echo makeTable($orders);  
+}  
+else{ 
+echo "<p> You havent made any orders yet brokieeeee</p>"; 
+} 
+} 
+catch (PDOException $e) {  
+echo "<p><strong>Error:</strong> " . $e->getMessage() . "</p>";  
+}  
+?>  
+</section> 
+</main> 
+<?php 
+}; 
+
+require __DIR__ . '/main.php'; 

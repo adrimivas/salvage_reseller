@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // (b) query DB only if inputs look sane
   if (!$errors) {
-    $stmt = $pdo->prepare('SELECT User_ID, Email, password_hash FROM Customers WHERE Email = ? LIMIT 1');
+$stmt = $pdo->prepare('SELECT User_ID, Name, Email, PhoneNumber, DefaultShip, password_hash FROM Customers WHERE Email = ? LIMIT 1');
     $stmt->execute([$email]);
     $user = $stmt->fetch(); // row or false
 
@@ -40,7 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $login_success = true;
      session_start();
       $_SESSION['user'] = [
-      'id'    => (int)$user['User_ID'], // adapt to your PK column
+      'id'    => (int)$user['User_ID'], 
+      'name' =>$user['Name'],
+      'email' =>$user['Email'],
+      'phone' =>$user['PhoneNumber'],
+      'address' =>$user['DefaultShip'],
+      // adapt to your PK column
       ];
       session_regenerate_id(true);
       header('Location: index.php'); // change to your destination
