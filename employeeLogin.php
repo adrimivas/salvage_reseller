@@ -29,12 +29,14 @@ $page_title = 'Login • JUNKIES';
 
       <label class="field">
         <span class="label">Email</span>
-        <input type="email" name="email" required value="<?= htmlspecialchars($email ?? '') ?>" class="input">
+        <!--just changed 'name= email to Email' -->
+        <input type="email" name="Email" required value="<?= htmlspecialchars($email ?? '') ?>" class="input">
       </label>
 
       <label class="field">
         <span class="label">Password</span>
-        <input type="password" name="password" required class="input">
+        <!-- AD: just edited 'name= password to password_hash' -->
+        <input type="password" name="password_hash" required class="input">
       </label>
 
       <button class="submit-button" type="submit">Sign in</button>

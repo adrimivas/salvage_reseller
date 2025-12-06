@@ -36,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$email]);
     $user = $stmt->fetch(); // row or false
 
-    if ($user && password_verify($pass, $user['password_hash'])) {
+    //if ($user && password_verify($pass, $user['password_hash'])) { just to test
+    if ($user && $pass === $user['password_hash']) {
       $login_success = true;
      session_start();
       $_SESSION['user'] = [
