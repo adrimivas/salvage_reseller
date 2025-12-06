@@ -29,11 +29,11 @@ $errors[] = 'Please enter your password.';
 } 
 // (b) query DB only if inputs look sane 
 if (!$errors) { 
-$stmt = $pdo->prepare('SELECT User_ID, Email, Password, Name, PhoneNumber, DefaultShip FROM Customers WHERE Email = ? LIMIT 1'); 
+$stmt = $pdo->prepare('SELECT User_ID, Email, password, Name, PhoneNumber, DefaultShip FROM Customers WHERE Email = ? LIMIT 1'); 
 $stmt->execute([$email]); 
 $user = $stmt->fetch(); // row or false 
 
-if ($user && password_verify($pass, $user['Password'])) { 
+if ($user && password_verify($pass, $user['password'])) { 
 $login_success = true; 
 session_regenerate_id(true); 
 $_SESSION['user'] = [ 'id' => (int)$user['User_ID'], 'email' => $user['Email'], 
