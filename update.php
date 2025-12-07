@@ -117,7 +117,8 @@ $content = function () use ($errors, $success, $item, $item_id_lookup) {
 
         <!-- STEP 2: If item is found, show update form -->
         <?php if ($item): ?>
-            <?php $current = $item['item_condition'] ?? ''; ?>
+            <?php $currentRaw = $item['item_condition'] ?? '';
+             $current = strtolower(trim($currentRaw));?>
 
             <section class="update-form">
                 <h2>Update Item #<?= (int)$item['item_id']; ?></h2>
@@ -131,11 +132,11 @@ $content = function () use ($errors, $success, $item, $item_id_lookup) {
                     <label for="item_condition">Condition:</label>
                     <select name="item_condition" id="item_condition" required>
                         <option value="">Select Condition</option>
-                        <option value="New"      <?= $current === 'New' ? 'selected' : ''; ?>>New</option>
-                        <option value="Like New" <?= $current === 'Like New' ? 'selected' : ''; ?>>Like New</option>
-                        <option value="Good"     <?= $current === 'Good' ? 'selected' : ''; ?>>Good</option>
-                        <option value="Fair"     <?= $current === 'Fair' ? 'selected' : ''; ?>>Fair</option>
-                        <option value="Poor"     <?= $current === 'Poor' ? 'selected' : ''; ?>>Poor</option>
+                        <option value="New"      <?= $current === 'new' ? 'selected' : ''; ?>>New</option>
+                        <option value="Like New" <?= $current === 'like new' ? 'selected' : ''; ?>>Like New</option>
+                        <option value="Good"     <?= $current === 'good' ? 'selected' : ''; ?>>Good</option>
+                        <option value="Fair"     <?= $current === 'fair' ? 'selected' : ''; ?>>Fair</option>
+                        <option value="Poor"     <?= $current === 'poor' ? 'selected' : ''; ?>>Poor</option>
                     </select>
 
                     <br><br>
