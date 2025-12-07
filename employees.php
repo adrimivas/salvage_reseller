@@ -37,6 +37,15 @@ if (!isset($_SESSION['user'])) {
         <!-- 4. UPDATE -->
         <a href="update.php" class="Submit-button">Update Item</a>
 
+        <!-- 5. View Orders -->
+        <a href="viewOrders.php" class="Submit-button">View Orders</a>
+
+        <!-- 6. View Customers -->
+        <a href="viewCustomers.php" class="Submit-button">View Customers</a>
+
+        <!-- 7. View Inventory -->
+        <a href="viewInventory.php" class="Submit-button">View Inventory</a>
+
     </nav>
 </header>
 <!-- ============================================ -->
