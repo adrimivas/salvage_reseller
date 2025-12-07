@@ -1,8 +1,9 @@
 <?php
 session_start();
 
-// Only allow logged-in employees (email stored in session)
-if (!isset($_SESSION['email'])) {
+// Only allow logged-in employees (email stored in session) 
+//also changed email to user below
+if (!isset($_SESSION['user'])) {
     header("Location: employeeLogin.php");
     exit;
 }
