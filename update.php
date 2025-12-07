@@ -1,59 +1,43 @@
 <?php
 session_start();
 
-// Auth check
 if (empty($_SESSION['user']) || empty($_SESSION['user']['id'])) {
-    header('Location: employeeLogin.php');
+    header('Location: employee_login.php');
     exit();
 }
 
-// Connect to DB
-$mysqli = new mysqli('localhost', 'root', '', 'salvage_reseller');
-
-if ($mysqli->connect_error) {
-    die('Connection failed: ' . $mysqli->connect_error);
-}
+require_once__DIR__ .'/config.php';
+$pdp = get_pdo();
 
 $error_msg = '';
 $item = null;
 
-// ======================= STEP 3: HANDLE POST (UPDATE) =======================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
     $item_id = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
-    $item_condition = trim($_POST['item_condition'] ?? '');
+    $item_condition = trim($_POST['item_condition']??'');
 
-    if ($item_id && $item_condition !== '') {
+    if ($item_id && $item_condition !=='') {
+        $stmt = $pdp->prepare("Update inventory SET item_condition = ? WHERE item_id = ?");
 
-        $stmt = $mysqli->prepare("UPDATE Inventory SET item_condition = ? WHERE item_id = ?");
-        $stmt->bind_param("si", $item_condition, $item_id);
-
-        if ($stmt->execute()) {
-            $_SESSION['success_msg'] = "Item #$item_id updated successfully!";
+        if($stmt-> execute([$item_condition, $item_id])){
+            $_SESSION['success_msg'] = "Item #$item_id updated successfully.";
             header('Location: employees.php');
             exit();
-        } else {
-            $error_msg = "Error updating item: " . $mysqli->error;
+        } else{
+            $error_msg = "Failed to update item. Please try again.";
         }
-
-        $stmt->close();
-    } else {
-        $error_msg = "Invalid item ID or condition.";
+    }else{
+        $error_msg = "Invalid item ID or condition. Please check the data and try again.";
     }
 }
 
-// ======================= STEP 2: LOOK UP ITEM =======================
 if (isset($_GET['lookup'])) {
     $lookup_id = filter_input(INPUT_GET, 'item_id', FILTER_VALIDATE_INT);
 
     if ($lookup_id) {
-        $stmt = $mysqli->prepare("SELECT item_id, item_condition, item_name FROM Inventory WHERE item_id = ?");
-        $stmt->bind_param("i", $lookup_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $item = $result->fetch_assoc();
-
-        $stmt->close();
+        $stmt = $pdo->prepare("SELECT item_id, item_condition, item_name FROM Inventory WHERE item_id = ?");
+        $stmt->execute([$lookup_id]);
+        $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$item) {
             $error_msg = "Item not found.";
@@ -62,8 +46,6 @@ if (isset($_GET['lookup'])) {
         $error_msg = "Please enter a valid item ID.";
     }
 }
-
-$mysqli->close();
 ?>
 <!DOCTYPE html>
 <html>
@@ -79,7 +61,7 @@ $mysqli->close();
     <p style="color:red;"><?= htmlspecialchars($error_msg) ?></p>
 <?php endif; ?>
 
-<!-- ======================= STEP 1: ENTER ITEM ID ======================= -->
+<!-- STEP 1: Ask for item ID if no item is selected yet -->
 <?php if (!$item): ?>
 <form method="GET" action="update.php">
     <label for="item_id">Enter Item ID:</label>
@@ -87,17 +69,16 @@ $mysqli->close();
     <button type="submit" name="lookup">Look Up Item</button>
     <a href="employees.php">Cancel</a>
 </form>
-
 <?php endif; ?>
 
-<!-- ======================= STEP 2: SHOW ITEM & UPDATE FORM ======================= -->
+<!-- STEP 2: Show update form if item loaded -->
 <?php if ($item): ?>
-    <?php $current = $item['item_condition']; ?>
-
     <h3>Updating Item #<?= $item['item_id'] ?></h3>
     <p><strong>Name:</strong> <?= htmlspecialchars($item['item_name']) ?></p>
 
-    <form method="POST" action="update.php">
+    <?php $current = $item['item_condition']; ?>
+
+    <form method="POST">
         <input type="hidden" name="item_id" value="<?= $item['item_id'] ?>">
 
         <label for="item_condition">Condition:</label>
