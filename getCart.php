@@ -10,7 +10,7 @@
 
         // Replace "YourTable" and "your_column" with appropriate values
 
-        $stmt = $pdo->prepare("SELECT Inventory.item_id, Inventory.product_type,Inventory.item_name, Inventory.model,Inventory.price,Inventory.quantity  FROM cart NATURAL JOIN   Inventory WHERE cart.customerId =?");
+        $stmt = $pdo->prepare("SELECT Inventory.item_id, Inventory.product_type,Inventory.item_name, Inventory.model,Inventory.price,Inventory.quantity  FROM cart NATURAL JOIN   Inventory WHERE cart.customer_Id =?");
         $stmt->execute([$user_id]);
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
