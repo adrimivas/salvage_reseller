@@ -26,35 +26,20 @@ if (!isset($_SESSION['user'])) {
     <nav class="employee-nav">
 
         <!-- 1. ADD -->
-        <a href="add.php" class="Submit-button">Add</a>
+        <a href="addEmp.php" class="Submit-button">Add</a>
 
         <!-- 2. DELETE -->
-        <a href="delete.php" class="Submit-button">Delete</a>
+        <a href="delEmp.php" class="Submit-button">Delete</a>
 
-        <!-- 3. UPDATE -->
-        <a href="update.php" class="Submit-button">Update</a>
-
-        <!-- 4. VIEW ORDERS -->
-        <a href="viewOrders.php" class="Submit-button">View Orders</a>
-
-        <!-- 5. VIEW CUSTOMERS -->
-        <a href="viewCustomers.php" class="Submit-button">View Customers</a>
-
-        <!-- 6. VIEW INVENTORY -->
-        <a href="viewInventory.php" class="Submit-button">View Inventory</a>
-
-        <!-- 7. ANALYTICS -->
-        <a href="analytics.php" class="Submit-button">Analytics</a>
-
-        <!-- LOGOUT -->
-        <a href="logout.php" class="Submit-button">Logout</a>
+        <!-- 3. ANALYTICS -->
+        <a href="analyticsEmp.php" class="Submit-button">Analytics</a>
 
     </nav>
 </header>
 <!-- ============================================ -->
 
 <main>
-    <h2 class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['email']); ?>!</h2>
+    <h2 class="welcome-text">Welcome!</h2>
     <p>Select any option above to manage the system.</p>
 </main>
 
