@@ -34,6 +34,9 @@ if (!isset($_SESSION['user'])) {
         <!-- 3. ANALYTICS -->
         <a href="analyticsEmp.php" class="Submit-button">Analytics</a>
 
+        <!-- 4. UPDATE -->
+        <a href="update.php" class="Submit-button">Update Item</a>
+
     </nav>
 </header>
 <!-- ============================================ -->
