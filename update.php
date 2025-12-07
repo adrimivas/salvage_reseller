@@ -1,120 +1,154 @@
 <?php
-session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Auth check
-if (empty($_SESSION['user']) || empty($_SESSION['user']['id'])) {
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/config.php';
+$pdo = get_pdo();
+
+// Only allow logged-in employees
+if (empty($_SESSION['user'])) {
     header('Location: employeeLogin.php');
-    exit();
+    exit;
 }
 
-// Connect to DB
-$mysqli = new mysqli('localhost', 'root', '', 'salvage_reseller');
+$page_title = 'Update • JUNKIES';
+$active     = 'update';
 
-if ($mysqli->connect_error) {
-    die('Connection failed: ' . $mysqli->connect_error);
-}
+$errors  = [];
+$success = null;
 
-$error_msg = '';
-$item = null;
+$item    = null;          // the loaded item (if any)
+$item_id_lookup = '';     // the ID typed into the lookup form
 
-// ======================= STEP 3: HANDLE POST (UPDATE) =======================
+// ====================== HANDLE POST: SAVE UPDATE ======================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
-    $item_id = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
+    $item_id       = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
     $item_condition = trim($_POST['item_condition'] ?? '');
 
-    if ($item_id && $item_condition !== '') {
+    if (!$item_id) {
+        $errors[] = 'Invalid item ID.';
+    }
+    if ($item_condition === '') {
+        $errors[] = 'Item condition is required.';
+    }
 
-        $stmt = $mysqli->prepare("UPDATE Inventory SET item_condition = ? WHERE item_id = ?");
-        $stmt->bind_param("si", $item_condition, $item_id);
+    if (!$errors) {
+        try {
+            $stmt = $pdo->prepare("
+                UPDATE Inventory
+                SET item_condition = ?
+                WHERE item_id = ?
+            ");
+            $stmt->execute([$item_condition, $item_id]);
 
-        if ($stmt->execute()) {
-            $_SESSION['success_msg'] = "Item #$item_id updated successfully!";
-            header('Location: employees.php');
-            exit();
-        } else {
-            $error_msg = "Error updating item: " . $mysqli->error;
+            if ($stmt->rowCount() > 0) {
+                $success = "Item #$item_id updated successfully.";
+            } else {
+                $errors[] = "No item was updated. Check that the item ID exists.";
+            }
+        } catch (PDOException $e) {
+            $errors[] = "Database error: " . $e->getMessage();
         }
+    }
 
-        $stmt->close();
-    } else {
-        $error_msg = "Invalid item ID or condition.";
+    // after update, we can reload the item to show the current condition
+    if (!$errors) {
+        $stmt = $pdo->prepare("SELECT * FROM Inventory WHERE item_id = ?");
+        $stmt->execute([$item_id]);
+        $item = $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 
-// ======================= STEP 2: LOOK UP ITEM =======================
-if (isset($_GET['lookup'])) {
-    $lookup_id = filter_input(INPUT_GET, 'item_id', FILTER_VALIDATE_INT);
+// ====================== HANDLE GET: LOOKUP ITEM ======================
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lookup'])) {
+    $item_id_lookup = trim($_GET['item_id'] ?? '');
 
-    if ($lookup_id) {
-        $stmt = $mysqli->prepare("SELECT item_id, item_condition, item_name FROM Inventory WHERE item_id = ?");
-        $stmt->bind_param("i", $lookup_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $item = $result->fetch_assoc();
-
-        $stmt->close();
+    if ($item_id_lookup === '' || !ctype_digit($item_id_lookup)) {
+        $errors[] = 'Please enter a valid numeric item ID.';
+    } else {
+        $id = (int)$item_id_lookup;
+        $stmt = $pdo->prepare("SELECT * FROM Inventory WHERE item_id = ?");
+        $stmt->execute([$id]);
+        $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$item) {
-            $error_msg = "Item not found.";
+            $errors[] = "Item with ID $id not found.";
         }
-    } else {
-        $error_msg = "Please enter a valid item ID.";
     }
 }
 
-$mysqli->close();
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Update Item</title>
-</head>
-<body>
+// ====================== PAGE CONTENT (for main.php) ======================
+$content = function () use ($errors, $success, $item, $item_id_lookup) {
+    $email = $_SESSION['email'] ?? 'Employee';
+    ?>
+    <main class="page">
+        <h1>Update Inventory Item Condition</h1>
+        <p>Logged in as <strong><?= htmlspecialchars($email) ?></strong></p>
 
-<h2>Update Item Condition</h2>
+        <?php if ($success): ?>
+            <div class="success-message"><?= htmlspecialchars($success) ?></div>
+        <?php endif; ?>
 
-<?php if (!empty($error_msg)): ?>
-    <p style="color:red;"><?= htmlspecialchars($error_msg) ?></p>
-<?php endif; ?>
+        <?php if ($errors): ?>
+            <div class="error-messages">
+                <ul>
+                    <?php foreach ($errors as $e): ?>
+                        <li><?= htmlspecialchars($e) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
 
-<!-- ======================= STEP 1: ENTER ITEM ID ======================= -->
-<?php if (!$item): ?>
-<form method="GET" action="update.php">
-    <label for="item_id">Enter Item ID:</label>
-    <input type="number" name="item_id" id="item_id" required>
-    <button type="submit" name="lookup">Look Up Item</button>
-    <a href="employees.php">Cancel</a>
-</form>
+        <!-- STEP 1: Look up an item by ID -->
+        <section class="lookup-form">
+            <h2>Find Item to Update</h2>
+            <form method="get">
+                <label for="item_id">Item ID:</label>
+                <input type="number" name="item_id" id="item_id"
+                       required value="<?= htmlspecialchars($item_id_lookup) ?>">
+                <button type="submit" name="lookup">Look Up Item</button>
+            </form>
+        </section>
 
-<?php endif; ?>
+        <!-- STEP 2: If item is found, show update form -->
+        <?php if ($item): ?>
+            <?php $currentRaw = $item['item_condition'] ?? '';
+             $current = strtolower(trim($currentRaw));?>
 
-<!-- ======================= STEP 2: SHOW ITEM & UPDATE FORM ======================= -->
-<?php if ($item): ?>
-    <?php $current = $item['item_condition']; ?>
+            <section class="update-form">
+                <h2>Update Item #<?= (int)$item['item_id']; ?></h2>
+                <?php if (!empty($item['item_name'])): ?>
+                    <p><strong>Name:</strong> <?= htmlspecialchars($item['item_name']); ?></p>
+                <?php endif; ?>
 
-    <h3>Updating Item #<?= $item['item_id'] ?></h3>
-    <p><strong>Name:</strong> <?= htmlspecialchars($item['item_name']) ?></p>
+                <form method="post">
+                    <input type="hidden" name="item_id" value="<?= (int)$item['item_id']; ?>">
 
-    <form method="POST" action="update.php">
-        <input type="hidden" name="item_id" value="<?= $item['item_id'] ?>">
+                    <label for="item_condition">Condition:</label>
+                    <select name="item_condition" id="item_condition" required>
+                        <option value="">Select Condition</option>
+                        <option value="New"      <?= $current === 'new' ? 'selected' : ''; ?>>New</option>
+                        <option value="Like New" <?= $current === 'like new' ? 'selected' : ''; ?>>Like New</option>
+                        <option value="Good"     <?= $current === 'good' ? 'selected' : ''; ?>>Good</option>
+                        <option value="Fair"     <?= $current === 'fair' ? 'selected' : ''; ?>>Fair</option>
+                        <option value="Poor"     <?= $current === 'poor' ? 'selected' : ''; ?>>Poor</option>
+                    </select>
 
-        <label for="item_condition">Condition:</label>
-        <select name="item_condition" required>
-            <option value="New"      <?= $current === "New" ? 'selected' : '' ?>>New</option>
-            <option value="Like New" <?= $current === "Like New" ? 'selected' : '' ?>>Like New</option>
-            <option value="Good"     <?= $current === "Good" ? 'selected' : '' ?>>Good</option>
-            <option value="Fair"     <?= $current === "Fair" ? 'selected' : '' ?>>Fair</option>
-            <option value="Poor"     <?= $current === "Poor" ? 'selected' : '' ?>>Poor</option>
-        </select>
+                    <br><br>
+                    <button type="submit" name="update_item">Update Item</button>
+                    <a href="employees.php">Back to Dashboard</a>
+                </form>
+            </section>
+        <?php endif; ?>
 
-        <br><br>
-        <button type="submit" name="update_item">Update Item</button>
-        <a href="update.php">Look Up Another Item</a>
-        <a href="employees.php">Cancel</a>
-    </form>
-<?php endif; ?>
+    </main>
+    <?php
+};
 
-</body>
-</html>
+require __DIR__ . '/main.php';
+
