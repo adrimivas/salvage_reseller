@@ -17,7 +17,7 @@ if (empty($_SESSION['user'])) {
 }
 
 $page_title = 'Analytics • JUNKIES';
-$active     = 'analytics';
+$active     = 'analytics'; // in case head.php or other includes use this
 
 // ----- 1) Get selected month/year from GET or default to current -----
 $selectedMonth = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
@@ -61,111 +61,111 @@ $data   = [$carQty, $partQty];
 $currentYear = (int)date('Y');
 $yearOptions = [2024, 2025];
 
-// ----- 3) Page content closure -----
-$content = function () use (
-    $selectedMonth, $selectedYear, $yearOptions,
-    $labels, $data, $carQty, $partQty, $totalAll 
-) {
-    $email = $_SESSION['email'] ?? 'Employee';
+// Month names for the form
+$monthNames = [
+    1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+    5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+    9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
+];
 
-    // Month names for the form
-    $monthNames = [
-        1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
-        5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
-        9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
-    ];
-    ?>
-    <main class="page">
-        <h1>Inventory Analytics</h1>
-        <h2> Shows comparison of cars vs car parts added in a given month </h2>
-        <p>Logged in as <strong><?= htmlspecialchars($email) ?></strong></p>
+// Include the head / layout (NO main.php)
+require __DIR__ . '/head.php';
 
-        <section class="filters">
-            <form method="get">
-                <label>
-                    Month:
-                    <select name="month">
-                        <?php foreach ($monthNames as $num => $name): ?>
-                            <option value="<?= $num ?>"
-                                <?= $num === $selectedMonth ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($name) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
+$email = $_SESSION['email'] ?? 'Employee';
+?>
 
-                <label>
-                    Year:
-                    <select name="year">
-                        <?php foreach ($yearOptions as $year): ?>
-                            <option value="<?= $year ?>"
-                                <?= $year === $selectedYear ? 'selected' : '' ?>>
-                                <?= $year ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
+<main class="page">
+    <h1>Inventory Analytics</h1>
+    <h2>Shows comparison of cars vs car parts added in a given month</h2>
+    <p>Logged in as <strong><?= htmlspecialchars($email) ?></strong></p>
 
-                <button type="submit">Update</button>
-            </form>
-        </section>
+    <section class="filters">
+        <form method="get">
+            <label>
+                Month:
+                <select name="month">
+                    <?php foreach ($monthNames as $num => $name): ?>
+                        <option value="<?= $num ?>"
+                            <?= $num === $selectedMonth ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($name) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
 
-        <section class="totals">
-            <h2>
-                Product Type Breakdown –
-                <?= htmlspecialchars($monthNames[$selectedMonth]) . ' ' . $selectedYear ?>
-            </h2>
+            <label>
+                Year:
+                <select name="year">
+                    <?php foreach ($yearOptions as $year): ?>
+                        <option value="<?= $year ?>"
+                            <?= $year === $selectedYear ? 'selected' : '' ?>>
+                            <?= $year ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
 
-            <?php if ($totalAll === 0): ?>
-                <p>No inventory items were added in this month.</p>
-            <?php else: ?>
-                <ul>
-                    <li><strong>Cars (product_type = 0):</strong> <?= $carQty ?></li>
-                    <li><strong>Car Parts (product_type = 1):</strong> <?= $partQty ?></li>
-                    <li><strong>Total Items:</strong> <?= $totalAll ?></li>
-                </ul>
+            <button type="submit">Update</button>
+        </form>
+    </section>
 
-                <div style="max-width: 500px; margin-top: 20px;">
-                    <canvas id="productTypeChart"></canvas>
-                </div>
+    <section class="totals">
+        <h2>
+            Product Type Breakdown –
+            <?= htmlspecialchars($monthNames[$selectedMonth]) . ' ' . $selectedYear ?>
+        </h2>
 
-                <!-- Chart.js CDN -->
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                <script>
-                    (function () {
-                        const ctx = document.getElementById('productTypeChart').getContext('2d');
+        <?php if ($totalAll === 0): ?>
+            <p>No inventory items were added in this month.</p>
+        <?php else: ?>
+            <ul>
+                <li><strong>Cars (product_type = 0):</strong> <?= $carQty ?></li>
+                <li><strong>Car Parts (product_type = 1):</strong> <?= $partQty ?></li>
+                <li><strong>Total Items:</strong> <?= $totalAll ?></li>
+            </ul>
 
-                        const chartData = {
-                            labels: <?= json_encode($labels) ?>,
-                            datasets: [{
-                                data: <?= json_encode($data) ?>,
-                            }]
-                        };
+            <div style="max-width: 500px; margin-top: 20px;">
+                <canvas id="productTypeChart"></canvas>
+            </div>
 
-                        const chartOptions = {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Cars vs Car Parts (by quantity)'
-                                }
+            <!-- Chart.js CDN -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                (function () {
+                    const ctx = document.getElementById('productTypeChart').getContext('2d');
+
+                    const chartData = {
+                        labels: <?= json_encode($labels) ?>,
+                        datasets: [{
+                            data: <?= json_encode($data) ?>,
+                        }]
+                    };
+
+                    const chartOptions = {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Cars vs Car Parts (by quantity)'
                             }
-                        };
+                        }
+                    };
 
-                        new Chart(ctx, {
-                            type: 'pie',
-                            data: chartData,
-                            options: chartOptions
-                        });
-                    })();
-                </script>
-            <?php endif; ?>
-        </section>
-    </main>
-    <?php
-};
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: chartData,
+                        options: chartOptions
+                    });
+                })();
+            </script>
+        <?php endif; ?>
+    </section>
+</main>
 
-require __DIR__ . '/main.php';
+<?php
+// If you have a common footer file, you could optionally include it here:
+// require __DIR__ . '/footer.php';
+

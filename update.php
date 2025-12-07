@@ -27,7 +27,7 @@ $item_id_lookup = '';     // the ID typed into the lookup form
 
 // ====================== HANDLE POST: SAVE UPDATE ======================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
-    $item_id       = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
+    $item_id        = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
     $item_condition = trim($_POST['item_condition'] ?? '');
 
     if (!$item_id) {
@@ -39,14 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
 
     if (!$errors) {
         try {
-            $stmt = $pdo->prepare("
-                UPDATE Inventory
-                SET item_condition = ?
-                WHERE item_id = ?
-            ");
-            $stmt->execute([$item_condition, $item_id]);
+            // Call stored procedure instead of direct UPDATE
+            $stmt = $pdo->prepare("CALL update_inventory_condition(:item_id, :item_condition)");
+            $stmt->execute([
+                ':item_id'        => $item_id,
+                ':item_condition' => $item_condition,
+            ]);
 
-            if ($stmt->rowCount() > 0) {
+            // Our stored procedure will SELECT ROW_COUNT() AS affected_rows
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $affected = $result['affected_rows'] ?? 0;
+
+            // Clean up remaining result sets from CALL
+            while ($stmt->nextRowset()) {
+                // no-op, just clearing results
+            }
+
+            if ($affected > 0) {
                 $success = "Item #$item_id updated successfully.";
             } else {
                 $errors[] = "No item was updated. Check that the item ID exists.";
@@ -151,4 +160,3 @@ $content = function () use ($errors, $success, $item, $item_id_lookup) {
 };
 
 require __DIR__ . '/main.php';
-
