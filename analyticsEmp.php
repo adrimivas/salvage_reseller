@@ -32,17 +32,10 @@ if ($selectedMonth < 1 || $selectedMonth > 12) {
 $startDate = sprintf('%04d-%02d-01', $selectedYear, $selectedMonth);
 $endDate   = date('Y-m-d', strtotime($startDate . ' +1 month'));
 
-// ----- 2) Query Inventory for this month, grouped by product_type -----
+// ----- 2) Query Inventory for this month, grouped by product_type via stored procedure -----
 
 // product_type: 0 = car, 1 = car part
-$sql = "
-    SELECT product_type, SUM(quantity) AS total_qty
-    FROM Inventory
-    WHERE created_date >= ? AND created_date < ?
-    GROUP BY product_type
-";
-
-$stmt = $pdo->prepare($sql);
+$stmt = $pdo->prepare("CALL get_inventory_product_type_summary(?, ?)");
 $stmt->execute([$startDate, $endDate]);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -146,9 +139,6 @@ $content = function () use (
                             labels: <?= json_encode($labels) ?>,
                             datasets: [{
                                 data: <?= json_encode($data) ?>,
-                                // Colors optional – Chart.js will default if omitted,
-                                // but you can uncomment / tweak if you want consistency:
-                                // backgroundColor: ['#4e79a7', '#f28e2b'],
                             }]
                         };
 

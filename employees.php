@@ -31,6 +31,8 @@ if (!isset($_SESSION['user'])) {
         <!-- 2. ANALYTICS -->
         <a href="analyticsEmp.php" class="Submit-button">Analytics</a>
 
+        <a href="delEmp.php" class="Submit-button">Delete</a>
+
         <!-- 3. UPDATE -->
         <a href="update.php" class="Submit-button">Update Item</a>
 
@@ -41,6 +43,8 @@ if (!isset($_SESSION['user'])) {
 <main>
     <h2 class="welcome-text">Welcome!</h2>
     <p>Select any option above to manage the system.</p>
+
+
 </main>
 
 </body>

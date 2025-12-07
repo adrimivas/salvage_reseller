@@ -1,9 +1,14 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 require_once __DIR__ . '/config.php';
+$pdo = get_pdo();
 
 // Only allow logged-in employees
 if (empty($_SESSION['user'])) {
@@ -12,22 +17,80 @@ if (empty($_SESSION['user'])) {
 }
 
 $page_title = 'Delete • JUNKIES';
-$active = 'add';
+$active     = 'delete';
 
-// If you don't actually use the layout system (main.php) for employees,
-// you can skip the closure and just output HTML directly. But I'll keep
-// your pattern for now:
-$content = function () {
-    $employeeId = $_SESSION['user']['id'] ?? null;
-    $email = $_SESSION['email'] ?? 'Unknown';
+$errors  = [];
+$success = null;
 
-    // $pdo = get_pdo(); // use this later when you actually add to DB
+// Form value (default / repopulate)
+$item_id = trim($_POST['item_id'] ?? '');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Validation
+    if ($item_id === '') {
+        $errors[] = 'Item ID is required.';
+    } elseif (!ctype_digit($item_id)) {
+        $errors[] = 'Item ID must be a valid number.';
+    }
+
+    if (!$errors) {
+        try {
+            // Call the stored procedure instead of direct DELETE
+            $stmt = $pdo->prepare("CALL delete_inventory_item(?)");
+            $stmt->execute([$item_id]);
+
+            // rowCount() on CALL is a bit driver-dependent, but with a simple DELETE
+            // inside the procedure it usually still reflects affected rows.
+            if ($stmt->rowCount() > 0) {
+                $success = "Item with ID {$item_id} was deleted successfully via stored procedure.";
+                $item_id = '';
+            } else {
+                $errors[] = "No item found with ID {$item_id}, or nothing was deleted.";
+            }
+
+        } catch (PDOException $e) {
+            $errors[] = "Database error: " . $e->getMessage();
+        }
+    }
+}
+
+// Page content
+$content = function () use ($errors, $success, $item_id) {
+    $email = $_SESSION['email'] ?? 'Employee';
     ?>
     <main class="page">
-        <h1>Delete Item</h1>
-        <p>You are logged in as: <strong><?= htmlspecialchars($email) ?></strong></p>
+        <h1>Delete Inventory Item</h1>
+        <p>Logged in as <strong><?= htmlspecialchars($email) ?></strong></p>
 
-        <p>Here is where your "delete" form will eventually go.</p>
+        <?php if ($success): ?>
+            <div class="success-message"><?= htmlspecialchars($success) ?></div>
+        <?php endif; ?>
+
+        <?php if ($errors): ?>
+            <div class="error-messages">
+                <ul>
+                    <?php foreach ($errors as $e): ?>
+                        <li><?= htmlspecialchars($e) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <form method="post" class="inventory-form">
+
+            <label>Item ID to Delete</label>
+            <input
+                type="number"
+                name="item_id"
+                required
+                value="<?= htmlspecialchars($item_id) ?>"
+            >
+
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this item?');">
+                Delete Item
+            </button>
+        </form>
     </main>
     <?php
 };
