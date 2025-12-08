@@ -26,7 +26,7 @@ if (!$item_id) {
 
 try {
 
-  $stmt = $pdo->prepare("INSERT IGNORE INTO cart (customer_Id, item_id) VALUES (?, ?)");
+  $stmt = $pdo->prepare("call add_to_cart(?, ?)");
   $stmt->execute([$user_id, $item_id]);
   echo json_encode(['ok'=>true]);
 } catch (PDOException $e) {

@@ -12,7 +12,6 @@ function navClass(string $key, ?string $active): string {
   <div class="nav-bar-links-container">
     <a class="<?= navClass('login', $active ?? null) ?>"    href="login.php">Login</a>
     <a class="<?= navClass('register', $active ?? null) ?>" href="register.php">Register</a>
-    <a class="<?= navClass('profile', $active ?? null) ?>"  href="profile.php">Profile</a>
     <a class="<?= navClass('Home', $active ?? null) ?>"   href="index.php">Home</a>
   </div>
 
@@ -25,7 +24,7 @@ function navClass(string $key, ?string $active): string {
         hover
         class="icon-lottie"></lottie-player>
     </a>
-    <a href="#" class="nav-icon" title="Profile">
+    <a href="profile.php" class="nav-icon" title="Profile">
       <lottie-player
         src="assets/icons/profileIcon.json"
         background="transparent"

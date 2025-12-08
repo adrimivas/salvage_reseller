@@ -35,7 +35,7 @@ else {
     if ($make ===''){ //change made here from empty to ' ' 
         //change made heere from inventory to v_available_inventory
         $stmt = $pdo->prepare('
-        SELECT  Price,item_condition, item_name, model, product_type,item_id,quantity 
+        SELECT  price,item_condition, item_name, model, product_type,item_id,quantity 
         FROM v_available_inventory  
         WHERE   product_type = ? 
         LIMIT 10
@@ -48,7 +48,7 @@ else {
     }
     else{
         $stmt = $pdo->prepare('
-        SELECT  Price,item_condition, item_name, model, product_type,item_id,quantity 
+        SELECT  price,item_condition, item_name, model, product_type,item_id,quantity 
         FROM v_available_inventory 
         WHERE make LIKE ?  
             AND product_type = ? 

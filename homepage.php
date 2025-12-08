@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/auth.php';
+
+$isLoggedIn = is_logged_in();
+?>
 
 <div class="homepage-welcome-message">
     <div><h1>Welcome to JunkWeb!</h1>
@@ -82,7 +87,7 @@
               <h3 class="item-title">${car.model} — ${car.item_name}</h3>
               <p class="item-details">
                 <span class="item-condition">Condition: ${car.item_condition}</span> ·
-                <span class="item-price"> Price : $${car.Price}</span>
+                <span class="item-price"> Price : $${car.price}</span>
                 
 
               </p>
@@ -99,7 +104,7 @@
               <h3 class="item-title">${car.model}</h3>
               <p class="item-details">
                 <span class="item-condition">Condition: ${car.item_condition}</span> ·
-                <span class="item-price"> Price: $${car.Price}</span>
+                <span class="item-price"> Price: $${car.price}</span>
               </p>
               ${car.quantity > 0 ? `<button type="button" id="${car.item_id}" class="add-to-cart-btn">Add to Cart</button>` : 'Out Of Stock'}
             </div>
@@ -115,9 +120,13 @@
       btn.addEventListener("click", handleButtonClick);
     }
     }
-
+  const IS_LOGGED_IN = <?= $isLoggedIn ? 'true' : 'false' ?>;  
   function handleButtonClick(e){
     e.preventDefault();
+    if (!IS_LOGGED_IN){
+      alert("Please log in to add items to your cart.");
+      return;
+    }
     const btn = e.currentTarget;           // the clicked button
     const id  = btn.id;                    // should be a number/string
     const fd  = new FormData();

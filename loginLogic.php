@@ -20,6 +20,7 @@ $pass   = $_POST['password'] ?? '';
 $login_success = false;
 // --- 2) known credentials (in real life, fetch from DB) ---
 $typed_id = '';     // remember what user typed so we can re-fill the form
+
 // --- 2) if form submitted, validate + verify ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // (a) cheap input validation
@@ -32,7 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // (b) query DB only if inputs look sane
   if (!$errors) {
-$stmt = $pdo->prepare('SELECT User_ID, Name, Email, PhoneNumber, DefaultShip, password_hash FROM Customers WHERE Email = ? LIMIT 1');
+    //New Update
+    // Call stored procedure instead of raw SELECT
+    $stmt = $pdo->prepare('CALL get_user_by_email(?)');
     $stmt->execute([$email]);
     $user = $stmt->fetch(); // row or false
 
@@ -45,7 +48,7 @@ $stmt = $pdo->prepare('SELECT User_ID, Name, Email, PhoneNumber, DefaultShip, pa
       'email' =>$user['Email'],
       'phone' =>$user['PhoneNumber'],
       'address' =>$user['DefaultShip'],
-      // adapt to your PK column
+      'login_time' => time(), // potentially add a trigger to log out the user due to inactivity or after a set amount of time
       ];
       session_regenerate_id(true);
       header('Location: index.php'); // change to your destination

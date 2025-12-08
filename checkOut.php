@@ -9,13 +9,13 @@
         $pdo = get_pdo();
 
         // Replace "YourTable" and "your_column" with appropriate values
-        $sql3 = $pdo->prepare(" INSERT INTO Orders (Purchase_Date, ItemID, User_ID) SELECT CURDATE(), c.item_id, c.customerId FROM cart AS c WHERE c.customerId = ?");
+        $sql3 = $pdo->prepare(" INSERT INTO Orders (Purchase_Date, ItemID, User_ID) SELECT CURDATE(), c.item_id, c.customer_Id FROM cart AS c WHERE c.customer_Id = ?");
         $sql3->execute([$user_id]);
 
-        $stmt = $pdo->prepare("UPDATE Inventory JOIN cart on cart.item_id=Inventory.item_id SET Inventory.quantity=Inventory.quantity -1 WHERE cart.customerId= ?");
+        $stmt = $pdo->prepare("UPDATE Inventory JOIN cart on cart.item_id=Inventory.item_id SET Inventory.quantity=Inventory.quantity -1 WHERE cart.customer_Id= ?");
         $stmt->execute([$user_id]);
 
-        $sql2 = $pdo->prepare("DELETE FROM cart WHERE customerId = ?");
+        $sql2 = $pdo->prepare("DELETE FROM cart WHERE customer_Id = ?");
         $sql2->execute([$user_id]);
         
 

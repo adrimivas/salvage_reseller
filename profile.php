@@ -35,7 +35,7 @@ $pdo = get_pdo();
 <?php 
 try{ 
 $stmt = $pdo->prepare("SELECT 
-OrderID, Purchase_Date, ItemID, item_name, make, model, year, price, item_condition, product_type
+OrderID, Purchase_Date, item_id, item_name, make, model, year, price, item_condition, product_type
 FROM v_customer_order_history 
 WHERE User_ID = ? 
 ORDER BY Purchase_Date DESC

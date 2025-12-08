@@ -12,7 +12,6 @@
 
 html,body{
   font-size: 16px;
-  margin: 0;
   
 }
 
@@ -85,6 +84,11 @@ body {
 }
 
 /* Home Page Styles */
+
+.page{
+  margin-left: 1rem;
+  margin-top: 2rem;
+}
 .homepage-welcome-message {
   text-align: center;
   margin-top: 2rem;
