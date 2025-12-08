@@ -3,7 +3,7 @@
 // include database config and helper function
 try {
     $pdo = new PDO(
-        'mysql:host=localhost;dbname=kdubey;charset=utf8mb4',
+        'mysql:host=localhost;dbname=salvage_reseller;charset=utf8mb4',
         'kdubey',
         'Sevh2ypol',
         [
