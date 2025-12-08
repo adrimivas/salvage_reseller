@@ -87,9 +87,8 @@ $isLoggedIn = is_logged_in();
               <h3 class="item-title">${car.model} — ${car.item_name}</h3>
               <p class="item-details">
                 <span class="item-condition">Condition: ${car.item_condition}</span> ·
+                <span class="item-condition">Qantity: ${car.quantity}</span> · 
                 <span class="item-price"> Price : $${car.price}</span>
-                
-
               </p>
              ${car.quantity > 0 ? `<button type="button" id="${car.item_id}" class="add-to-cart-btn">Add to Cart</button>` : 'Out Of Stock'}
             </div>
@@ -104,6 +103,7 @@ $isLoggedIn = is_logged_in();
               <h3 class="item-title">${car.model}</h3>
               <p class="item-details">
                 <span class="item-condition">Condition: ${car.item_condition}</span> ·
+                <span class="item-condition">Qantity: ${car.quantity}</span> · 
                 <span class="item-price"> Price: $${car.price}</span>
               </p>
               ${car.quantity > 0 ? `<button type="button" id="${car.item_id}" class="add-to-cart-btn">Add to Cart</button>` : 'Out Of Stock'}

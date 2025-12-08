@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       box.innerHTML = '';
       data.forEach(item => {
-        if (item.product_type == 1 && item.quantity>0){
+        if (item.product_type == 1){
           const card = document.createElement('div');
           card.className = 'item-card';
           card.innerHTML = `
@@ -32,15 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="item-details">
                 <span class="item-price">$${item.price}</span>
               </p>
-              <p class="item-details" >
-                <span class="item-price">Qauntity: ${item.quantity}</span>
-              </p>
               <button type="button" id ="${item.item_id}" class="add-to-cart-btn">Remove</button>
             </div>
           `;
           box.appendChild(card);;
         }
-        else if (item.quantity>0){
+        else {
           const card = document.createElement('div');
           card.className = 'item-card';
           card.innerHTML = `
@@ -48,9 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
               <h3 class="item-title">${item.model}</h3>
               <p class="item-details">
                 <span class="item-price">$${item.price}</span>
-              </p>
-              <p class="item-details">
-                <span class="item-price">Quantity: ${item.quantity}</span>
               </p>
               <button type="button" id ="${item.item_id}" class="add-to-cart-btn">Remove</button>
             </div>

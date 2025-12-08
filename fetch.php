@@ -34,12 +34,7 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST') {
 else {
     if ($make ===''){ //change made here from empty to ' ' 
         //change made heere from inventory to v_available_inventory
-        $stmt = $pdo->prepare('
-        SELECT  price,item_condition, item_name, model, product_type,item_id,quantity 
-        FROM v_available_inventory  
-        WHERE   product_type = ? 
-        LIMIT 10
-        ');
+        $stmt = $pdo->prepare('call GetAvailableInventoryByType(?)');
         $stmt->execute([$product_type]);
         
         $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -47,13 +42,7 @@ else {
         exit;
     }
     else{
-        $stmt = $pdo->prepare('
-        SELECT  price,item_condition, item_name, model, product_type,item_id,quantity 
-        FROM v_available_inventory 
-        WHERE make LIKE ?  
-            AND product_type = ? 
-        LIMIT 10
-        ');
+        $stmt = $pdo->prepare('call GetAvailableInventoryByMakeAndType(?, ?)');
         $pattern = "%{$make}%";
         $stmt->execute([$pattern, $product_type ]);
         
