@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       box.innerHTML = '';
       data.forEach(item => {
-        if (item.product_type==='1' && item.quantity>0){
+        if (item.product_type == 1 && item.quantity>0){
           const card = document.createElement('div');
           card.className = 'item-card';
           card.innerHTML = `
