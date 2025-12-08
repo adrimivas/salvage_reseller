@@ -32,8 +32,14 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 else {
-    if (empty($make)){
-        $stmt = $pdo->prepare('SELECT  Price,item_condition, item_name, model, product_type,item_id,quantity FROM Inventory WHERE   product_type = ? LIMIT 10');
+    if ($make ===''){ //change made here from empty to ' ' 
+        //change made heere from inventory to v_available_inventory
+        $stmt = $pdo->prepare('
+        SELECT  Price,item_condition, item_name, model, product_type,item_id,quantity 
+        FROM v_available_inventory  
+        WHERE   product_type = ? 
+        LIMIT 10
+        ');
         $stmt->execute([$product_type]);
         
         $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +47,13 @@ else {
         exit;
     }
     else{
-        $stmt = $pdo->prepare('SELECT  Price,item_condition, item_name, model, product_type,item_id,quantity FROM Inventory WHERE make LIKE ?  AND product_type = ? LIMIT 10');
+        $stmt = $pdo->prepare('
+        SELECT  Price,item_condition, item_name, model, product_type,item_id,quantity 
+        FROM v_available_inventory 
+        WHERE make LIKE ?  
+            AND product_type = ? 
+        LIMIT 10
+        ');
         $pattern = "%{$make}%";
         $stmt->execute([$pattern, $product_type ]);
         
