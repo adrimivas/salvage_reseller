@@ -10,7 +10,7 @@
 
         $stmt = $pdo->prepare("
         SELECT 
-            item_id, product_type, item_name, model, price, quantity
+            item_id, product_type, item_name, model, price
         FROM v_cart_details
         WHERE user_id = ?
         ");
