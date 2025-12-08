@@ -8,16 +8,20 @@
     try {
         $pdo = get_pdo();
 
-        // Replace "YourTable" and "your_column" with appropriate values
-
-        $stmt = $pdo->prepare("SELECT Inventory.item_id, Inventory.product_type,Inventory.item_name, Inventory.model,Inventory.price,Inventory.quantity  FROM cart NATURAL JOIN   Inventory WHERE cart.customer_Id =?");
+        $stmt = $pdo->prepare("
+        SELECT 
+            item_id, product_type, item_name, model, price, quantity
+        FROM v_cart_details
+        WHERE user_id = ?
+        ");
         $stmt->execute([$user_id]);
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         echo json_encode(['ok'=>true,'data'=>$rows], JSON_PRETTY_PRINT);
     } catch (PDOException $e) {
-        echo "<p><strong>Error:</strong> " . $e->getMessage() . "</p>";
+        http_response_code(500);
+        echo json_encode(['ok' =>false,'error'=>$e->getMessage()]);
     }
 
 ?>
