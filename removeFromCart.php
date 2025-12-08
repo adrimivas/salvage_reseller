@@ -11,7 +11,7 @@
 
         // Replace "YourTable" and "your_column" with appropriate values
 
-        $stmt = $pdo->prepare("DELETE FROM cart WHERE customer_ID=? and item_id = ?");
+        $stmt = $pdo->prepare("DELETE FROM cart WHERE customer_Id=? and item_id = ?");
         $stmt->execute([$user_id,$item_id]);
 
         echo json_encode(['ok'=>true], JSON_PRETTY_PRINT);
