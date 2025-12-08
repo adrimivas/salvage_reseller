@@ -10,7 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/config.php';
 $pdo = get_pdo();
 
-// Only allow logged-in employees
 if (empty($_SESSION['user'])) {
     header('Location: employeeLogin.php');
     exit;
@@ -22,10 +21,9 @@ $active     = 'update';
 $errors  = [];
 $success = null;
 
-$item    = null;          // the loaded item (if any)
-$item_id_lookup = '';     // the ID typed into the lookup form
-
-// ====================== HANDLE POST: SAVE UPDATE ======================
+$item    = null;         
+$item_id_lookup = '';     // this is id into lookup form
+// saves update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
     $item_id        = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
     $item_condition = trim($_POST['item_condition'] ?? '');
@@ -39,20 +37,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
 
     if (!$errors) {
         try {
-            // Call stored procedure instead of direct UPDATE
+  
             $stmt = $pdo->prepare("CALL update_inventory_condition(:item_id, :item_condition)");
             $stmt->execute([
                 ':item_id'        => $item_id,
                 ':item_condition' => $item_condition,
             ]);
 
-            // Our stored procedure will SELECT ROW_COUNT() AS affected_rows
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $affected = $result['affected_rows'] ?? 0;
 
-            // Clean up remaining result sets from CALL
             while ($stmt->nextRowset()) {
-                // no-op, just clearing results
             }
 
             if ($affected > 0) {
@@ -65,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
         }
     }
 
-    // after update, we can reload the item to show the current condition
     if (!$errors) {
         $stmt = $pdo->prepare("SELECT * FROM Inventory WHERE item_id = ?");
         $stmt->execute([$item_id]);
@@ -73,7 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
     }
 }
 
-// ====================== HANDLE GET: LOOKUP ITEM ======================
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lookup'])) {
     $item_id_lookup = trim($_GET['item_id'] ?? '');
 
@@ -91,7 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lookup'])) {
     }
 }
 
-// ====================== PAGE CONTENT (for main.php) ======================
 $content = function () use ($errors, $success, $item, $item_id_lookup) {
     $email = $_SESSION['email'] ?? 'Employee';
     ?>
@@ -112,8 +104,7 @@ $content = function () use ($errors, $success, $item, $item_id_lookup) {
                 </ul>
             </div>
         <?php endif; ?>
-
-        <!-- STEP 1: Look up an item by ID -->
+<!-- looks up by id-->
         <section class="lookup-form">
             <h2>Find Item to Update</h2>
             <form method="get">
@@ -124,7 +115,7 @@ $content = function () use ($errors, $success, $item, $item_id_lookup) {
             </form>
         </section>
 
-        <!-- STEP 2: If item is found, show update form -->
+        <!-- if item is found, show update form -->
         <?php if ($item): ?>
             <?php $currentRaw = $item['item_condition'] ?? '';
              $current = strtolower(trim($currentRaw));?>

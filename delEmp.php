@@ -10,7 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/config.php';
 $pdo = get_pdo();
 
-// Only allow logged-in employees
 if (empty($_SESSION['user'])) {
     header('Location: employeeLogin.php');
     exit;
@@ -22,12 +21,10 @@ $active     = 'delete';
 $errors  = [];
 $success = null;
 
-// Form value (default / repopulate)
 $item_id = trim($_POST['item_id'] ?? '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Validation
     if ($item_id === '') {
         $errors[] = 'Item ID is required.';
     } elseif (!ctype_digit($item_id)) {
@@ -36,12 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errors) {
         try {
-            // Call the stored procedure instead of direct DELETE
             $stmt = $pdo->prepare("CALL delete_inventory_item(?)");
             $stmt->execute([$item_id]);
 
-            // rowCount() on CALL is a bit driver-dependent, but with a simple DELETE
-            // inside the procedure it usually still reflects affected rows.
             if ($stmt->rowCount() > 0) {
                 $success = "Item with ID {$item_id} was deleted successfully via stored procedure.";
                 $item_id = '';
@@ -55,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Page content
 $content = function () use ($errors, $success, $item_id) {
     $email = $_SESSION['email'] ?? 'Employee';
     ?>

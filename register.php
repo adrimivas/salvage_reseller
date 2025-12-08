@@ -2,7 +2,6 @@
 <h2>Register</h2> 
 
 <form method="POST"> 
-    <!-- Replace these fields with ones that match your chosen table --> 
 
     <label for="Name">Enter Full Name:</label> 
     <input type="text" name="Name" id="Name" required><br> 
@@ -14,7 +13,7 @@
     <input type="text" name="PhoneNumber" id="PhoneNumber" required><br> 
 
     <label for="password_hash">Create Password:</label> 
-    <!-- ideally this should be type="password" -->
+
     <input type="password" name="password_hash" id="password_hash" required><br> 
      
     <label for="DefaultShip">Enter shipping address:</label> 
@@ -27,14 +26,12 @@
 if ($_SERVER["REQUEST_METHOD"] === "POST") { 
     try { 
         $pdo = get_pdo(); 
-
-        // Call the stored procedure instead of direct INSERT
         $stmt = $pdo->prepare("CALL register_customer(?, ?, ?, ?, ?)"); 
         $stmt->execute([ 
             $_POST['Name'], 
             $_POST['Email'], 
             $_POST['PhoneNumber'], 
-            $_POST['password_hash'],   // in a real app, hash this first
+            $_POST['password_hash'], 
             $_POST['DefaultShip'], 
         ]); 
 

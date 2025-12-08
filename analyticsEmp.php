@@ -17,9 +17,8 @@ if (empty($_SESSION['user'])) {
 }
 
 $page_title = 'Analytics • JUNKIES';
-$active     = 'analytics'; // in case head.php or other includes use this
+$active     = 'analytics'; 
 
-// ----- 1) Get selected month/year from GET or default to current -----
 $selectedMonth = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
 $selectedYear  = isset($_GET['year'])  ? (int)$_GET['year']  : (int)date('Y');
 
@@ -28,18 +27,15 @@ if ($selectedMonth < 1 || $selectedMonth > 12) {
     $selectedMonth = (int)date('m');
 }
 
-// Compute date range [start, end)
+// Compute date range
 $startDate = sprintf('%04d-%02d-01', $selectedYear, $selectedMonth);
 $endDate   = date('Y-m-d', strtotime($startDate . ' +1 month'));
 
-// ----- 2) Query Inventory for this month, grouped by product_type via stored procedure -----
 
-// product_type: 0 = car, 1 = car part
 $stmt = $pdo->prepare("CALL get_inventory_product_type_summary(?, ?)");
 $stmt->execute([$startDate, $endDate]);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Default totals
 $carQty   = 0;
 $partQty  = 0;
 
@@ -53,22 +49,19 @@ foreach ($rows as $row) {
 
 $totalAll = $carQty + $partQty;
 
-// Labels + data for Chart.js
+// labels + data for pie chart
 $labels = ['Cars', 'Car Parts'];
 $data   = [$carQty, $partQty];
 
-// Years to show in dropdown (adjust as you like)
 $currentYear = (int)date('Y');
 $yearOptions = [2024, 2025];
 
-// Month names for the form
 $monthNames = [
     1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
     5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
     9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
 ];
 
-// Include the head / layout (NO main.php)
 require __DIR__ . '/head.php';
 
 $email = $_SESSION['email'] ?? 'Employee';
@@ -128,7 +121,6 @@ $email = $_SESSION['email'] ?? 'Employee';
                 <canvas id="productTypeChart"></canvas>
             </div>
 
-            <!-- Chart.js CDN -->
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
                 (function () {
@@ -166,6 +158,3 @@ $email = $_SESSION['email'] ?? 'Employee';
 </main>
 
 <?php
-// If you have a common footer file, you could optionally include it here:
-// require __DIR__ . '/footer.php';
-

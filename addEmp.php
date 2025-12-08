@@ -10,7 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/config.php';
 $pdo = get_pdo();
 
-// Only allow logged-in employees
 if (empty($_SESSION['user'])) {
     header('Location: employeeLogin.php');
     exit;
@@ -22,7 +21,6 @@ $active     = 'add';
 $errors  = [];
 $success = null;
 
-// Form values (default / repopulate)
 $item_condition = trim($_POST['item_condition'] ?? '');
 $price          = trim($_POST['price'] ?? '');
 $make           = trim($_POST['make'] ?? '');
@@ -34,7 +32,6 @@ $year           = trim($_POST['year'] ?? '');
 $acquisition    = trim($_POST['acquisition'] ?? '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validation
     if ($item_name === '')               $errors[] = 'Item name is required.';
     if ($product_type === '')            $errors[] = 'Product type is required.';
     if ($item_condition === '')          $errors[] = 'Item condition is required.';
@@ -47,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errors) {
         try {
-            // Make sure table name matches your DB: Inventory vs inventory
             $stmt = $pdo->prepare("
                 INSERT INTO Inventory 
                 (item_condition, price, make, quantity, product_type, item_name, model, created_date, year, acquisition)
@@ -62,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $product_type,
                 $item_name,
                 $model,
-                date('Y-m-d'),      // created_date as string
+                date('Y-m-d'),
                 $year,
                 $acquisition
             ]);
 
             $success = "Item added successfully!";
 
-            // Clear form fields after success
+            // this clears form after success
             $item_condition = $price = $make = $quantity = $product_type =
             $item_name = $model = $year = $acquisition = '';
 
@@ -79,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Page content
 $content = function () use (
     $errors, $success, $item_condition, $price, $make, $quantity,
     $product_type, $item_name, $model, $year, $acquisition
