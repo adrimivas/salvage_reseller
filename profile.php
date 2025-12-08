@@ -34,7 +34,12 @@ $pdo = get_pdo();
 <h2> Past Orders: </h2> 
 <?php 
 try{ 
-$stmt = $pdo->prepare("SELECT OrderID, Purchase_Date, ItemID, product_type FROM Orders WHERE User_ID = ? ORDER BY Purchase_Date DESC");  
+$stmt = $pdo->prepare("SELECT 
+OrderID, Purchase_Date, ItemID, item_name, make, model, year, price, item_condition, product_type
+FROM v_customer_order_history 
+WHERE User_ID = ? 
+ORDER BY Purchase_Date DESC
+");  
 $stmt->execute([$user['id']]);  
 
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);  
@@ -48,7 +53,7 @@ echo "<p> You havent made any orders yet brokieeeee</p>";
 } 
 } 
 catch (PDOException $e) {  
-echo "<p><strong>Error:</strong> " . $e->getMessage() . "</p>";  
+echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";  
 }  
 ?>  
 </section> 
